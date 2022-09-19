@@ -3,7 +3,7 @@ import fetch from 'node-fetch'
 import { segment } from "oicq";
 import lodash from "lodash";
 
-let list = [1648003295,]//禁止迫害的QQ
+let list = []//禁止迫害的QQ
 
 export class slander extends plugin {
     constructor() {
