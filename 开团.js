@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 const _path = process.cwd();//云崽目录
 
 let interval = 5;//开团间隔，单位秒
-let mode = 1;//图片模式，0是网络接口，1是本地
+let mode = 0;//图片模式，0是网络接口，1是本地
 let path = `${_path}/resources/kunkun`//图片路径
 let kunkun = [7578658303] //坤坤歌单(网易云)
 var ikunyl = [
