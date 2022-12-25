@@ -30,7 +30,6 @@ schedule.scheduleJob('0 0 12 * * 4', async function () {
         return;
     }
     for (var key of data) {
-        // console.log(key)
         if (Gruop_qq.includes(key * 1) && mr_qqGrop) { //判断是否在群白名单内
             continue;
         }
@@ -57,9 +56,8 @@ export class Crazy4 extends plugin {
     }
 
     async Crazy4(e) {
-        let msg =await Crazyfour()
-        if(!msg.image)
-        msg = msg.replace(/四/g, e.msg.split("星期")[1]);
+        let msg = await Crazyfour();
+        if(typeof(msg) == "string") msg = msg.replace(/四/g, e.msg.split("星期")[1]);
         e.reply(msg);
         return true;
     }
