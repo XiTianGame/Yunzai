@@ -1,12 +1,13 @@
 import plugin from '../../lib/plugins/plugin.js'
+import common from '../../lib/common/common.js';
 import fs from 'fs';
 import { segment } from "oicq";
 import fetch from "node-fetch";
 
 const _path = process.cwd();//云崽目录
 
-let interval = 5;//开团间隔，单位秒
-let mode = 0;//图片模式，0是网络接口，1是本地
+let interval = 4;//开团间隔，单位秒
+let mode = 1;//图片模式，0是网络接口，1是本地
 let path = `${_path}/resources/kunkun`//图片路径
 let kunkun = [7578658303] //坤坤歌单(网易云)
 var ikunyl = [
@@ -21,6 +22,11 @@ var ikunyl = [
 
 
 let timer = {};
+let list = [];
+if(fs.existsSync(path)){
+    list = fs.readdirSync(`${path}`);
+}
+let addphoto = false;
 
 export class ikun extends plugin {
     constructor() {
@@ -36,16 +42,25 @@ export class ikun extends plugin {
                     fnc: 'jtm'
                 },
                 {
-                    reg: '^(.*)开团(.*)$',
+                    reg: '^#*开团$',
                     fnc: 'kaituan'
                 },
                 {
-                    reg: '^(.*)(别发了|住手|报警了)$',
+                    reg: '^#*(别发了|住手|报警了)$',
                     fnc: 'stopkaituan'
                 },
                 {
-                    reg: '^((.*)鸡叫(.*))$',
+                    reg: '^#*鸡叫$',
                     fnc: 'jijiao'
+                },
+                {
+                    reg: '^#*添加kun图$',
+                    fnc: 'add'
+                },
+                {
+                    reg: '(.*)',
+                    fnc: 'photo',
+                    log: false
                 }
             ]
         })
@@ -60,7 +75,6 @@ export class ikun extends plugin {
                 cancel(e);
                 e.reply("没有找到本地图库路径");
             }
-            let list = fs.readdirSync(`${path}`);//读取全部文件
             if (list.length == 0) {
                 cancel(e);
                 e.reply("本地图库为空");
@@ -122,6 +136,28 @@ export class ikun extends plugin {
         e.reply(segment.record(jijiao[0].url)); //随机鸡叫
 
         return true; //返回true 阻挡消息不再往下
+    }
+
+    async add(e){
+        if(!e.isMaster){
+            return false;
+        }
+        addphoto = true;
+        e.reply("请发送图片,可以一次性发送多张图片哦");
+        return true;
+    }
+
+    async photo(e){
+        if(!e.img || !addphoto){
+            return false;
+        }
+        for(let i of e.message){
+            if(i.type !== 'image') continue;
+            await common.downFile(i.url,`${path}/${i.file}`)
+        }
+        e.reply("录入成功！")
+        addphoto = false;
+        return true;
     }
 }
 
